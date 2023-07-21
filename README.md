@@ -37,7 +37,44 @@ Installation
 ============
 
 * Install a python environment with the prerequisites above (has been tested on mac and linux).
+```bash
+# Using pdm
+pdm venv create --name Chronicle 3.10
+eval $(pdm venv activate Chronicle)
+pdm add pydicom
+pdm add CouchDB
+pdm add Pillow
+pdm add numpy
+```
+
 * Install Apache couchdb
+``bash
+# Get couchdb
+DOCKER_IMAGE=couchdb:3.3.2
+docker pull $DOCKER_IMAGE
+
+# Make data directory
+cd /projects/Chronicle/
+mkdir ./couchdb_data
+
+COUCHDB_USER=
+COUCHDB_PASSWORD=
+CONTAINER_NAME=
+docker run \
+  -e COUCHDB_USER=$COUCHDB_USER \
+  -e COUCHDB_PASSWORD=$COUCHDB_PASSWORD \
+  -v /projects/Chronicle/couchdb_data:/opt/couchdb/data \
+  -d \
+  -p 5984:5984 \
+  --name $CONTAINER_NAME \
+  $DOCKER_IMAGE
+
+# Stop if need be
+docker stop $CONTAINER_NAME
+# Remove
+docker rm $CONTAINER_NAME
+```
+
 * Clone the chronicle respository: `git clone git://github.com/pieper/Chronicle`
 
 * Get the couchSite utility: `git clone git://github.com/pieper/couchSite`
