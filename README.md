@@ -75,9 +75,9 @@ docker stop $CONTAINER_NAME
 docker rm $CONTAINER_NAME
 ```
 
-* Clone the chronicle respository: `git clone git://github.com/pieper/Chronicle`
+* Clone the chronicle respository: `git clone git://github.com/QTIM-Lab/Chronicle`
 
-* Get the couchSite utility: `git clone git://github.com/pieper/couchSite`
+* Get the couchSite utility: `git clone git://github.com/QTIM-Lab/couchSite`
 
 * Install chronicle into couchdb: `cd Chronicle; ../couchSite/couchSite.py . chronicle`
 
