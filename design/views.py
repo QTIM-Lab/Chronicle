@@ -1,89 +1,37 @@
 # the views.py file includes the map/reduce functions for the couchdb
 # design as python dictionaries.
 
+import os
+
+view_funcs = {'indexed_tags.js': None, 'delete_all_dicoms.js': None, 'context.js': None, 'series_instances.js': None, 'instance_references.js': None}
+for view in view_funcs.keys():
+    with open(os.path.join("design",view)) as view_file:
+        view_func = view_file.read()
+        view_funcs[view] = view_func
+
+
 global views
 views = { "instances" : {
     "language" : "javascript",
     "views" : {
         "context" : {
-            "map" : '''
-              function(doc) {
-                var tags = [
-                  ['institution', '00080080', 'UnspecifiedInstitution'],
-                  ['patientID', '00100020', 'UnspecifiedPatientID'],
-                  ['studyUID', '0020000D', 'UnspecifiedStudyUID'],
-                  ['studyDescription', '00081030', 'UnspecifiedStudyDescription'],
-                  ['seriesUID', '0020000E', 'UnspecifiedSeriesUID'],
-                  ['seriesDescription', '0008103E', 'UnspecifiedSeriesDescription'],
-                  ['instanceUID', '00080018', 'UnspecifiedInstanceUID'],
-                  ['modality', '00080060', 'UnspecifiedModality'],
-                ];
-                var key = {};
-                if (doc.dataset) {
-                  var i;
-                  for (i = 0; i < tags.length; i++) {
-                    var tag = tags[i];
-                    var name     = tag[0];
-                    var t        = tag[1];
-                    var fallback = tag[2];
-                    key[name] = fallback;
-                    if (doc.dataset[t] && doc.dataset[t].Value) {
-                      key[name] = doc.dataset[t].Value || fallback;
-                    }
-                  }
-                  emit([
-                      [key.institution,key.patientID],
-                      [key.studyDescription,key.studyUID],
-                      [key.modality,key.seriesDescription,key.seriesUID],
-                      key.instanceUID
-                    ],
-                    1
-                  );
-                }
-              }
-            ''',
+            "map" : view_funcs['context.js'],
             "reduce" : "_count()",
         },
-        "seriesInstances" : {
-            "map" : '''
-              function(doc) {
-                var tags = [
-                  ['seriesUID', '0020000E', 'UnspecifiedSeriesUID'],
-                  ['classUID', '00080016', 'UnspecifiedClassUID'],
-                  ['instanceUID', '00080018', 'UnspecifiedInstanceUID'],
-                ];
-                var key = {};
-                if (doc.dataset) {
-                  var i;
-                  for (i = 0; i < tags.length; i++) {
-                    var tag = tags[i];
-                    var name     = tag[0];
-                    var t        = tag[1];
-                    var fallback = tag[2];
-                    key[name] = fallback;
-                    if (doc.dataset[t] && doc.dataset[t].Value) {
-                      key[name] = doc.dataset[t].Value || fallback;
-                    }
-                  }
-                  emit( key.seriesUID, [key.classUID, key.instanceUID] );
-                }
-              }
-            ''',
+        "series_instances" : {
+            "map" : view_funcs['series_instances.js'],
             "reduce" : "_count()",
         },
-        "instanceReferences" : {
-            "map" : '''
-              // TODO: this needs to be generalized to instance->instance reference
-              // for now this is specific to instancePoints
-              function(doc) {
-                if (doc.instancePoints) {
-                  instanceUIDs = Object.keys(doc.instancePoints);
-                  for (var i in instanceUIDs) {
-                    emit( instanceUIDs[i], doc._id );
-                  }
-                }
-              }
-            ''',
+        "instance_references" : {
+            "map" : view_funcs['instance_references.js'],
+            "reduce" : "_count()",
+        },
+        "delete_all_dicoms": {
+            "map": view_funcs['delete_all_dicoms.js'],
+            "reduce" : "_count()",
+        },
+        "indexed_tags": {
+            "map": view_funcs['indexed_tags.js'],
             "reduce" : "_count()",
         }
     }

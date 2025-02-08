@@ -12,7 +12,7 @@ so the image specific things should be factored out.
 since full object is available already as attachment)
 
 """
-
+import pdb
 import argparse
 import couchdb
 import pydicom
@@ -22,6 +22,8 @@ import os
 import sys
 import tempfile
 import traceback
+
+from pdf_to_png import pdf_to_png
 
 haveImage = True
 try:
@@ -155,7 +157,7 @@ class ChronicleRecord():
             print("No window width or center in the dataset")
             # no width/center, so use whole
             bits = dataset.BitsAllocated
-            samples = dataset.SamplesperPixel
+            samples = dataset.SamplesPerPixel
             if bits == 8 and samples == 1:
                 mode = "L"
             elif bits == 8 and samples == 3:
@@ -175,8 +177,13 @@ class ChronicleRecord():
             try:
                 image = Image.frombuffer(mode, size, dataset.PixelData, "raw", mode, 0, 1).convert('L')
             except ValueError:
-                print("ValueError getting image")
-                image = None
+                print("ValueError getting image. Will try to use dataset.pixel_data")
+                try:
+                    # Convert the NumPy array to a PIL Image
+                    image = Image.fromarray(dataset.pixel_array)
+                except:
+                    print("ValueError getting image.")
+                    image = None
         else:
             try:
                 image = self.windowedData(
@@ -207,12 +214,20 @@ class ChronicleRecord():
         keys are the image size.
         """
         images = {}
+        if dataset[(0x0008, 0x0016)].value in ["1.2.840.10008.5.1.4.1.1.104.1", "1.2.840.10008.5.1.4.1.1.104.2"]:
+            # pdf
+            images = pdf_to_png(bin_data=dataset.get((0x0042, 0x0011)).value,)
+            return images
         image = self.imageFromDataset(dataset)
         if image:
             for size in sizes:
                 aspectRatio = image.size[0]/(1. * image.size[1])
                 newSize = ( size, int(size / aspectRatio) )
-                images[size] = image.resize(newSize,Image.ANTIALIAS)
+                try:
+                    images[size] = image.resize(newSize,PIL.Image.LANCZOS)
+                except:
+                    print("Line 233")
+                    pdb.set_trace()
         return images
 
     def recordDirectory(self,directoryPath):
@@ -269,6 +284,7 @@ class ChronicleRecord():
         if self.attachImages:
             doc = self.db.get(doc_id)
             images = self.imagesFromDataset(dataset)
+            print("self.attachImages")
             for imageSize in images.keys():
                 print('...thumbnail %d...' % imageSize)
                 imageName = "image%d.png" % imageSize

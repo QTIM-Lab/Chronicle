@@ -1,0 +1,25 @@
+[project]
+name = ""
+version = ""
+description = ""
+authors = [
+    {name = "Bearce", email = "bbearce@gmail.com"},
+]
+dependencies = [
+    "pydicom>=2.4.1",
+    "CouchDB",
+    "Pillow",
+    "numpy",
+    "python-gdcm>=3.0.22",
+    "pylibjpeg[all]>=1.4.0",
+    "PyMuPDF>=1.23.3",
+    "ipython>=8.15.0",
+    "bpython>=0.24",
+    "pandas>=2.1.1",
+]
+license = {text = "MIT"}
+requires-python = ">=3.10"
+
+[build-system]
+requires = ["pdm-pep517>=1.0.0"]
+build-backend = "pdm.pep517.api"
