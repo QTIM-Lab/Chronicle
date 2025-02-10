@@ -3,3 +3,6 @@
 
 # vi Developer
 *.sw*
+
+# database data
+couchdb_data

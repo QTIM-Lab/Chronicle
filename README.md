@@ -13,8 +13,6 @@ The items are represented as DICOM object instances stored as documents in Couch
 Repository Contents
 ===================
 
-* site: a web app (html5/js/css) to be hosted from CouchDB for interacting with the data.
-
 * bin: python utility scripts to transfer local (DICOM) data to a CouchDB instance.
 
 
@@ -28,53 +26,31 @@ Prerequisites
  * numpy
 * For the server
  * Apache CouchDB
-* For the browser
- * HTML5 compliant browser (Chrome, Desktop Safari, Firefox, IE should all work with the WebGL rendering)
-
-Use https://github.com/pieper/couchSite to upload design documents and site (html/css/javascript)
 
 Installation
 ============
 
 * Install a python environment with the prerequisites above (has been tested on mac and linux).
 ```bash
-# Using pdm
-pdm venv create --name Chronicle 3.10
-eval $(pdm venv activate Chronicle)
-pdm add pydicom
-pdm add CouchDB
-pdm add Pillow
-pdm add numpy
-pdm add python-gdcm
-pdm add pylibjpeg[all]
-pdm add PyMuPDF
-pdm add ipython
-pdm add bpython
-pdm add pandas
-```
-
-* Use singulaity image
-```bash
-DOCKER_IMAGE=ubuntu:latest
-# SIGULARITY_IMAGE=
-
-
+# Using pyenv\poetry
+# pyenv virtualenv 3.11.0 Chronicle
+source ~/.bashrc; pyenv deactivate; pyenv activate Chronicle;
 ```
 
 * Install Apache couchdb
 ``bash
 # Get couchdb
-DOCKER_IMAGE=couchdb:3.3.2
+DOCKER_IMAGE=couchdb:3.4.2
 docker pull $DOCKER_IMAGE
 
 # Make data directory
-cd /scratch90/QTIM/Active/23-0284/EHR/ # probably
-DATABASE_LOCATION=/data/couchdb_data
+cd /scratch90/QTIM/Active/23-0284/EHR/Chronicle
+DATABASE_LOCATION=/scratch90/QTIM/Active/23-0284/EHR/Chronicle/couchdb_data
+echo $DATABASE_LOCATION
 
-
-COUCHDB_USER=admin_slce
-COUCHDB_PASSWORD=slce_couchdb_password
-CONTAINER_NAME=slce_couchdb
+COUCHDB_USER=admin
+COUCHDB_PASSWORD=password_qtim
+CONTAINER_NAME=axispacs_couchdb
 docker run \
   -e COUCHDB_USER=$COUCHDB_USER \
   -e COUCHDB_PASSWORD=$COUCHDB_PASSWORD \

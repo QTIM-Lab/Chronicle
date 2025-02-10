@@ -1,4 +1,0 @@
-pydicom
-CouchDB
-Pillow
-numpy

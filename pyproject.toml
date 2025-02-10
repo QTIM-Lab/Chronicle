@@ -1,25 +1,26 @@
 [project]
-name = ""
-version = ""
+name = "chronicle"
+version = "0.1.0"
 description = ""
 authors = [
-    {name = "Bearce", email = "bbearce@gmail.com"},
+    {name = "bbearce",email = "bbearce@gmail.com"}
 ]
+readme = "README.md"
+requires-python = ">=3.11"
 dependencies = [
-    "pydicom>=2.4.1",
-    "CouchDB",
-    "Pillow",
-    "numpy",
-    "python-gdcm>=3.0.22",
-    "pylibjpeg[all]>=1.4.0",
-    "PyMuPDF>=1.23.3",
-    "ipython>=8.15.0",
-    "bpython>=0.24",
-    "pandas>=2.1.1",
+    "pydicom (>=3.0.1,<4.0.0)",
+    "couchdb (>=1.2,<2.0)",
+    "pillow (>=11.1.0,<12.0.0)",
+    "numpy (>=2.2.2,<3.0.0)",
+    "python-gdcm (>=3.0.24.1,<4.0.0.0)",
+    "pymupdf (>=1.25.3,<2.0.0)",
+    "ipython (>=8.32.0,<9.0.0)",
+    "bpython (>=0.25,<0.26)",
+    "pandas (>=2.2.3,<3.0.0)",
+    "pylibjpeg[all] (>=2.0.1,<3.0.0)"
 ]
-license = {text = "MIT"}
-requires-python = ">=3.10"
+
 
 [build-system]
-requires = ["pdm-pep517>=1.0.0"]
-build-backend = "pdm.pep517.api"
+requires = ["poetry-core>=2.0.0,<3.0.0"]
+build-backend = "poetry.core.masonry.api"
