@@ -3,14 +3,12 @@ import requests, json
 import pandas as pd, numpy as np
 import couchdb
 
-USERNAME="admin_slce"
-PASSWORD="slce_couchdb_password"
+USERNAME=""
+PASSWORD=""
 DNS="localhost"
 DB_PORT="5984"
-IMAGES_DB="axispacs"
-IMAGES_DB="axispacs_sample"
-IMAGES_DB="forum"
-IMAGES_DB="forum_sample"
+IMAGES_DB=""
+
 
 
 server = couchdb.Server(f"http://{USERNAME}:{PASSWORD}@{DNS}:{DB_PORT}")

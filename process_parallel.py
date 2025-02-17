@@ -4,24 +4,29 @@ import multiprocessing
 
 
 # Directory containing DICOMs
-DICOMS="/data/PACS/DICOM"
-# DICOMS="/data/PACS/forum"
+# DICOMS="/persist/PACS/DICOM"
+# DICOMS="/persist/PACS/forum"
+DICOMS="/persist/PACS/imagepools"
 
 # URL and dbname
-url="http://admin_slce:slce_couchdb_password@localhost:5984"
+COUCHDB_USER="admin"
+COUCHDB_PASSWORD="password_qtim"
+url=f"http://{COUCHDB_USER}:{COUCHDB_PASSWORD}@localhost:5984"
 # dbname="axispacs"
-dbname="forum"
+# dbname="forum"
+dbname="imagepools"
 
 directories = os.listdir(DICOMS)
+# os.path.exists(f"{DICOMS}/100/316801/1.2.276.0.75.2.2.42.50122019542.20191112142115589.5060675980.dcm")
 
 def process_directory(dir=""):
-    cmd = ['/home/bearceb/.local/share/pdm/venvs/Chronicle-FgmQ98C8-Chronicle/bin/python', './bin/record.py', os.path.join(DICOMS, dir), '--url', url, '--dbName', dbname, '--dontAttachOriginals']
+    cmd = ['/persist/python_virtual_environments/bearceb/.pyenv/shims/python', './bin/record.py', os.path.join(DICOMS, dir), '--url', url, '--dbName', dbname, '--dontAttachOriginals']
     # print(cmd)
     process = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     stdout, stderr = process.communicate()
 
 
-pool = multiprocessing.Pool(25)
+pool = multiprocessing.Pool(15)
 start_time = time.perf_counter()
 processes = [pool.apply_async(process_directory, args=(x,)) for x in directories]
 result = [p.get() for p in processes]

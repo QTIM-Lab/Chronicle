@@ -226,7 +226,7 @@ class ChronicleRecord():
                 try:
                     images[size] = image.resize(newSize,PIL.Image.LANCZOS)
                 except:
-                    print("Line 233")
+                    print(f"...in def imagesFromDataset(self,dataset, sizes = (32,64,128,256,512)):")
                     pdb.set_trace()
         return images
 
@@ -241,7 +241,9 @@ class ChronicleRecord():
         print("Considering file: %s" % fileNamePath)
         # create dataset, skip non-dicom
         try:
-            dataset = pydicom.read_file(fileNamePath)
+            # pdb.set_trace()
+            # os.listdir(fileNamePath)
+            dataset = pydicom.dcmread(fileNamePath)
         except:
             print("...apparently not dicom")
             return
