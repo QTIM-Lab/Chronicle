@@ -16,6 +16,7 @@ dependencies = [
     "couchdb (>=1.2,<2.0)",
     "numpy (==1.24.0)",
     "pydicom (>=3.0.1,<4.0.0)",
+    "requests (>=2.32.3,<3.0.0)",
 ]
 
 

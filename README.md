@@ -63,27 +63,35 @@ docker rm $CONTAINER_NAME
 ```bash
 url=http://$COUCHDB_USER:$COUCHDB_PASSWORD@localhost:5984;
 
-dbname=axispacs_sample;
+dbname=axispacs_sample; DICOMS=/persist/PACS/DICOM;
 echo $url; echo $dbname;
 curl -X PUT $url/$dbname;
 
-dbname=axispacs;
+dbname=axispacs; DICOMS=/persist/PACS/DICOM;
 echo $url; echo $dbname;
 curl -X PUT $url/$dbname;
 
-dbname=forum_sample;
+dbname=forum_sample; DICOMS=/persist/PACS/forum;
 echo $url; echo $dbname;
 curl -X PUT $url/$dbname;
 
-dbname=forum;
+dbname=forum; DICOMS=/persist/PACS/forum;
 echo $url; echo $dbname;
 curl -X PUT $url/$dbname;
 
-dbname=imagepools_sample;
+dbname=forum_all_sample; DICOMS=/persist/PACS/forum_all;
 echo $url; echo $dbname;
 curl -X PUT $url/$dbname;
 
-dbname=imagepools;
+dbname=forum_all; DICOMS=/persist/PACS/forum_all;
+echo $url; echo $dbname;
+curl -X PUT $url/$dbname;
+
+dbname=imagepools_sample; DICOMS=/persist/PACS/imagepools;
+echo $url; echo $dbname;
+curl -X PUT $url/$dbname;
+
+dbname=imagepools; DICOMS=/persist/PACS/imagepools;
 echo $url; echo $dbname;
 curl -X PUT $url/$dbname;
 
@@ -100,7 +108,7 @@ At this point you should have some databases in the couchdb instance.  The next 
 [http://localhost:5984/_utils/#](http://localhost:5984/_utils/#)
 
 We can load in a particular DICOM or a dolder in the second example:
-```bin
+```bash
 SAMPLE_DICOM=<Enter DICOM path>
 python ./bin/record.py $SAMPLE_DICOM \
   --url $url \
@@ -108,10 +116,6 @@ python ./bin/record.py $SAMPLE_DICOM \
   --dontAttachOriginals
 
 
-DICOMS=/persist/PACS/RMLEI-Hyex-Spectralis-data
-# DICOMS=/persist/PACS/imagepools
-# DICOMS=/persist/PACS/DICOM
-# DICOMS=/persist/PACS/forum
 python ./bin/record.py $DICOMS \
   --url $url \
   --dbName $dbname \
@@ -126,24 +130,19 @@ python ./bin/record.py $DICOMS \
 curl -X PUT $url/$dbname/_design/instances -d '{
   "views": {
     "context": {
-      "map": '"$(jq -Rs . < design/context.js)"',
-      "reduce": "_count"
+      "map": '"$(jq -Rs . < design/context.js)"'
     },
     "series_instances": {
-      "map": '"$(jq -Rs . < design/series_instances.js)"',
-      "reduce": "_count"
+      "map": '"$(jq -Rs . < design/series_instances.js)"'
     },
     "instance_references": {
-      "map": '"$(jq -Rs . < design/instance_references.js)"',
-      "reduce": "_count"
+      "map": '"$(jq -Rs . < design/instance_references.js)"'
     },
     "delete_all_dicoms": {
-      "map": '"$(jq -Rs . < design/delete_all_dicoms.js)"',
-      "reduce": "_count"
+      "map": '"$(jq -Rs . < design/delete_all_dicoms.js)"'
     },
     "indexed_tags": {
-      "map": '"$(jq -Rs . < design/indexed_tags.js)"',
-      "reduce": "_count"
+      "map": '"$(jq -Rs . < design/indexed_tags.js)"'
     }
   },
   "language": "javascript"
