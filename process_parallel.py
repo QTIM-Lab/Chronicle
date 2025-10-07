@@ -11,7 +11,7 @@ IMAGES_DB_and_DATAFOLDER_KEY={
     "imagepools": '/persist/PACS/imagepools',
 }
 
-IMAGES_DB = 'forum_all'
+IMAGES_DB = 'axispacs'
 DATAFOLDER = IMAGES_DB_and_DATAFOLDER_KEY[IMAGES_DB]
 
 
@@ -25,20 +25,41 @@ url=f"http://{COUCHDB_USER}:{COUCHDB_PASSWORD}@localhost:5984"
 directories = os.listdir(DATAFOLDER)
 
 def process_directory(dir=""):
-    cmd = ['/persist/python_virtual_environments/bearceb/.pyenv/shims/python', './bin/record.py', os.path.join(DATAFOLDER, dir), '--url', url, '--dbName', IMAGES_DB, '--dontAttachOriginals']
-    # print(cmd)
-    process = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-    stdout, stderr = process.communicate()
+    try:
+        cmd = ['/persist/python_virtual_environments/bearceb/.pyenv/shims/python', 
+               './bin/record.py', 
+               os.path.join(DATAFOLDER, dir), 
+               '--url', url, 
+               '--dbName', IMAGES_DB, 
+               '--dontAttachOriginals']
+        
+        # print(f"Processing directory: {dir}")
+        process = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        stdout, stderr = process.communicate()
+        
+        if process.returncode != 0:
+            print(f"ERROR in {dir}: {stderr.decode()}")
+            return False, stderr.decode()
+        
+        # print(f"Completed directory: {dir}")
+        return True, stdout.decode()
+        
+    except Exception as e:
+        print(f"EXCEPTION in {dir}: {str(e)}")
+        return False, str(e)
 
 
-pool = multiprocessing.Pool(15)
-start_time = time.perf_counter()
-processes = [pool.apply_async(process_directory, args=(x,)) for x in directories]
-result = [p.get() for p in processes]
-finish_time = time.perf_counter()
-print(f"Program finished in {finish_time-start_time} seconds")
-print(result)
-
+pool = multiprocessing.Pool(int(multiprocessing.cpu_count()*0.90))
+try:
+    start_time = time.perf_counter()
+    processes = [pool.apply_async(process_directory, args=(x,)) for x in directories]
+    result = [p.get() for p in processes]
+    finish_time = time.perf_counter()
+    print(f"Program finished in {finish_time-start_time} seconds")
+    print(result)
+finally:
+    pool.close()
+    pool.join()
 
 # def process_directory(dir=""):
 #     cmd = ['/home/bearceb/.local/share/pdm/venvs/Chronicle-FgmQ98C8-Chronicle/bin/python', './bin/record.py', os.path.join(DATAFOLDER, dir), '--url', url, '--dbName', IMAGES_DB]

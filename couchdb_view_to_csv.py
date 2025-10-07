@@ -14,8 +14,8 @@ IMAGES_DB_and_DATAFOLDER_KEY={
     "axispacs_sample": 'AXISPACS',
     "forum": 'FORUM',
     "forum_sample": 'FORUM',
-    "forum_all": 'FORUM_ALL',
-    "forum_all_sample": 'FORUM_ALL',
+    "forum_all": 'FORUM_ALL', # 2025 export with all options checked during export - ask Steve
+    "forum_all_sample": 'FORUM_ALL', # 2025 export with all options checked during export - ask Steve
     "imagepools": 'IMAGEPOOLS',
     "imagepools_sample": 'IMAGEPOOLS',
 }
@@ -96,6 +96,6 @@ get_and_save_csv("imagepools_sample", 'IMAGEPOOLS')
 
 # BULK
 get_and_save_csv("axispacs", 'AXISPACS')
-get_and_save_csv("forum", 'FORUM') # HAd to split this up because it was too big, look in map reduce func in couchdb
+get_and_save_csv("forum", 'FORUM') # Had to split this up because it was too big, look in map reduce func in couchdb
 get_and_save_csv("forum_all", 'FORUM_ALL')
 get_and_save_csv("imagepools", 'IMAGEPOOLS')
